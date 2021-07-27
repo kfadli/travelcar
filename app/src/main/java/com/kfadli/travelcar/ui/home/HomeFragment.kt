@@ -1,39 +1,47 @@
-package com.kfadli.travelcar.ui.list
+package com.kfadli.travelcar.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.kfadli.travelcar.databinding.FragmentListBinding
+import com.kfadli.travelcar.ui.home.adapter.VehiclesAdapter
 
-class ListFragment : Fragment() {
+class HomeFragment : Fragment() {
 
-  private lateinit var listViewModel: ListViewModel
+  private lateinit var listViewModel: HomeViewModel
   private var _binding: FragmentListBinding? = null
 
   // This property is only valid between onCreateView and
   // onDestroyView.
   private val binding get() = _binding!!
 
+  private val adapter = VehiclesAdapter()
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
+  ): View {
     listViewModel =
-      ViewModelProvider(this).get(ListViewModel::class.java)
+      ViewModelProvider(this).get(HomeViewModel::class.java)
 
     _binding = FragmentListBinding.inflate(inflater, container, false)
+
     val root: View = binding.root
 
-    val textView: TextView = binding.textHome
-    listViewModel.text.observe(viewLifecycleOwner, Observer {
-      textView.text = it
+    binding.vehicleRecycler.apply {
+      layoutManager = LinearLayoutManager(requireContext())
+      adapter = this@HomeFragment.adapter
+    }
+
+    listViewModel.vehicles.observe(viewLifecycleOwner, { vehicles ->
+      adapter.updateVehicles(vehicles)
     })
+
     return root
   }
 

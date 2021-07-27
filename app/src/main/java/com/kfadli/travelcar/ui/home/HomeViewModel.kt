@@ -1,4 +1,4 @@
-package com.kfadli.travelcar.ui.list
+package com.kfadli.travelcar.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,14 +10,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListViewModel : ViewModel() {
+class HomeViewModel : ViewModel() {
 
   private val scope = CoroutineScope(Dispatchers.Main)
   private val server: CoreManager.Server = CoreManager.Server
 
-  private val _text = MutableLiveData<String>().apply {
+  private val _vehicles = MutableLiveData<List<VehicleResponse>>().apply {
     scope.launch {
-      value = load().toString()
+      value = load()
     }
   }
 
@@ -34,5 +34,5 @@ class ListViewModel : ViewModel() {
     }
   }
 
-  val text: LiveData<String> = _text
+  val vehicles: LiveData<List<VehicleResponse>> = _vehicles
 }
