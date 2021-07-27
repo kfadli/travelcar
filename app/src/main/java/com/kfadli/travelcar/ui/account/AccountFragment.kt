@@ -1,4 +1,4 @@
-package com.kfadli.travelcar.ui.dashboard
+package com.kfadli.travelcar.ui.account
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -13,7 +13,7 @@
 
   <fragment
     android:id="@+id/navigation_dashboard"
-    android:name="com.kfadli.travelcar.ui.dashboard.AccountFragment"
+    android:name="com.kfadli.travelcar.ui.account.AccountFragment"
     android:label="@string/title_account"
     tools:layout="@layout/fragment_account" />
 

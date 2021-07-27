@@ -1,4 +1,4 @@
-package com.kfadli.travelcar.ui.dashboard
+package com.kfadli.travelcar.ui.account
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,4 +10,5 @@ class AccountViewModel : ViewModel() {
     value = "This is dashboard Fragment"
   }
   val text: LiveData<String> = _text
+
 }

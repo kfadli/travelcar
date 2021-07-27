@@ -1,2 +1,3 @@
 rootProject.name = "TravelCar"
 include ':app'
+include ':core'
