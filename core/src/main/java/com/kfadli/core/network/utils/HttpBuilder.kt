@@ -1,4 +1,4 @@
-package com.kfadli.core
+package com.kfadli.core.network.utils
 
 import com.kfadli.core.network.Api
 import com.kfadli.core.network.retrofit.NetworkResponseAdapterFactory

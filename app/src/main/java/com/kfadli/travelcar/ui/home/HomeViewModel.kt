@@ -1,6 +1,8 @@
 package com.kfadli.travelcar.ui.home
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +10,8 @@ import com.kfadli.core.CoreManager
 import com.kfadli.core.network.NetworkResponse
 import com.kfadli.core.network.responses.ErrorResponse
 import com.kfadli.core.network.responses.VehicleResponse
+import com.kfadli.core.repositories.HttpRepository
+import com.kfadli.travelcar.TravelCarApplication
 import com.kfadli.travelcar.models.UIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,13 +19,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         private val TAG = HomeFragment::class.java.simpleName
     }
 
-    private val server: CoreManager = CoreManager()
+    private val httpRepository: HttpRepository =
+        (application as TravelCarApplication).coreManager.httpRepository
 
     private val _state = MutableLiveData<UIState<List<VehicleResponse>>>()
     val state: LiveData<UIState<List<VehicleResponse>>> = _state
@@ -30,7 +35,7 @@ class HomeViewModel : ViewModel() {
         _state.postValue(UIState.Loading)
 
         val response = withContext(Dispatchers.IO) {
-            server.loadItems()
+            httpRepository.loadItems()
         }
 
         Log.d(TAG, "response: $response")

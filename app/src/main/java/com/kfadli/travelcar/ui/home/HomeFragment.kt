@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kfadli.core.network.responses.VehicleResponse
+import com.kfadli.travelcar.MainActivity
 import com.kfadli.travelcar.databinding.FragmentListBinding
 import com.kfadli.travelcar.models.UIState
 import com.kfadli.travelcar.ui.home.adapter.VehiclesAdapter
@@ -39,8 +40,9 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        listViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+
+        listViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+
 
         _binding = FragmentListBinding.inflate(inflater, container, false)
 
@@ -74,22 +76,12 @@ class HomeFragment : Fragment() {
                     Log.d(TAG, "get vehicles from api with success")
 
                     onSuccess(state.data)
-
-                    binding.empty.root.visibility = View.INVISIBLE
-                    binding.error.root.visibility = View.INVISIBLE
-                    binding.vehicleRecycler.visibility = View.INVISIBLE
-                    binding.loader.root.visibility = View.VISIBLE
                 }
 
                 UIState.Loading -> {
                     Log.d(TAG, "loading in progress")
 
                     onLoading()
-
-                    binding.empty.root.visibility = View.INVISIBLE
-                    binding.error.root.visibility = View.INVISIBLE
-                    binding.vehicleRecycler.visibility = View.INVISIBLE
-                    binding.loader.root.visibility = View.VISIBLE
                 }
 
             }

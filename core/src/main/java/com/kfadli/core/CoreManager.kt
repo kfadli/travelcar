@@ -1,20 +1,22 @@
 package com.kfadli.core
 
-import com.kfadli.core.network.Api
-import com.kfadli.core.network.NetworkResponse
-import com.kfadli.core.network.responses.ErrorResponse
-import com.kfadli.core.network.responses.VehicleResponse
-
+import android.content.Context
+import android.content.SharedPreferences
+import com.kfadli.core.network.datasource.HttpCache
+import com.kfadli.core.repositories.HttpRepository
 
 private const val URL =
     "https://gist.githubusercontent.com//ncltg/6a74a0143a8202a5597ef3451bde0d5a/raw/8fa93591ad4c3415c9e666f888e549fb8f945eb7/"
 
+private const val SHARED_PREFERENCES_NAME = "cache"
 
-class CoreManager() {
+class CoreManager(context: Context) {
 
-    private val service: Api by lazy {
-        CoreFactory.createService(URL)
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+
+    val httpRepository: HttpRepository by lazy {
+        HttpRepository(CoreFactory.createService(URL), HttpCache(sharedPreferences))
     }
 
-    suspend fun loadItems(): NetworkResponse<List<VehicleResponse>, ErrorResponse> = service.getVehicles()
 }
