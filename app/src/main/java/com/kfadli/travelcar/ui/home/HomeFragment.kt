@@ -9,9 +9,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kfadli.core.network.responses.VehicleResponse
 import com.kfadli.travelcar.databinding.FragmentListBinding
 import com.kfadli.travelcar.models.UIState
 import com.kfadli.travelcar.ui.home.adapter.VehiclesAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -21,6 +25,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var listViewModel: HomeViewModel
     private var _binding: FragmentListBinding? = null
+
+    private val scope = CoroutineScope(Dispatchers.Main)
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -45,26 +51,87 @@ class HomeFragment : Fragment() {
             adapter = this@HomeFragment.adapter
         }
 
-        listViewModel.vehicles.observe(viewLifecycleOwner, { state ->
+        binding.empty.root.visibility = View.INVISIBLE
+        binding.error.root.visibility = View.INVISIBLE
+        binding.vehicleRecycler.visibility = View.INVISIBLE
+        binding.loader.root.visibility = View.VISIBLE
+
+        binding.error.retryButton.setOnClickListener {
+            scope.launch {
+                listViewModel.loadVehicles()
+            }
+        }
+
+        listViewModel.state.observe(viewLifecycleOwner, { state ->
             when (state) {
-                is UIState.Failure -> activity?.let {
+                is UIState.Failure -> {
                     Log.e(TAG, "Failed to get vehicles from api", state.exception)
-                    Toast.makeText(it, state.exception.message, Toast.LENGTH_SHORT).show()
+
+                    onFailure(state.exception)
                 }
 
                 is UIState.Success -> {
                     Log.d(TAG, "get vehicles from api with success")
-                    adapter.updateVehicles(state.data)
+
+                    onSuccess(state.data)
+
+                    binding.empty.root.visibility = View.INVISIBLE
+                    binding.error.root.visibility = View.INVISIBLE
+                    binding.vehicleRecycler.visibility = View.INVISIBLE
+                    binding.loader.root.visibility = View.VISIBLE
                 }
 
                 UIState.Loading -> {
-                    //show loader
+                    Log.d(TAG, "loading in progress")
+
+                    onLoading()
+
+                    binding.empty.root.visibility = View.INVISIBLE
+                    binding.error.root.visibility = View.INVISIBLE
+                    binding.vehicleRecycler.visibility = View.INVISIBLE
+                    binding.loader.root.visibility = View.VISIBLE
                 }
 
             }
         })
 
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        scope.launch {
+            listViewModel.loadVehicles()
+        }
+    }
+
+    private fun onFailure(exception: Throwable) {
+        binding.empty.root.visibility = View.INVISIBLE
+        binding.vehicleRecycler.visibility = View.INVISIBLE
+        binding.loader.root.visibility = View.INVISIBLE
+
+        binding.error.errorMsgText.text = exception.message
+        binding.error.root.visibility = View.VISIBLE
+    }
+
+    private fun onSuccess(data: List<VehicleResponse>) {
+        binding.error.root.visibility = View.INVISIBLE
+        binding.loader.root.visibility = View.INVISIBLE
+
+        if (data.isEmpty()) {
+            binding.empty.root.visibility = View.VISIBLE
+        } else {
+            adapter.updateVehicles(data)
+            binding.vehicleRecycler.visibility = View.VISIBLE
+        }
+    }
+
+    private fun onLoading() {
+        binding.empty.root.visibility = View.INVISIBLE
+        binding.error.root.visibility = View.INVISIBLE
+        binding.vehicleRecycler.visibility = View.INVISIBLE
+        binding.loader.root.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {

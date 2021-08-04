@@ -1,5 +1,6 @@
 package com.kfadli.travelcar.ui.home
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,27 +17,32 @@ import java.io.IOException
 
 class HomeViewModel : ViewModel() {
 
-    private val scope = CoroutineScope(Dispatchers.Main)
+    companion object {
+        private val TAG = HomeFragment::class.java.simpleName
+    }
+
     private val server: CoreManager = CoreManager()
 
-    private val _vehicles = MutableLiveData<UIState<List<VehicleResponse>>>().apply {
-        scope.launch {
-            value = when (val result = load()) {
-                is NetworkResponse.Success -> UIState.Success(result.body)
-                is NetworkResponse.ApiError -> UIState.Failure(IOException("message: ${result.body}, code: ${result.code}"))
-                is NetworkResponse.NetworkError -> UIState.Failure(result.error)
-                is NetworkResponse.UnknownError -> UIState.Failure(result.error ?: UnknownError())
-            }
-        }
-    }
+    private val _state = MutableLiveData<UIState<List<VehicleResponse>>>()
+    val state: LiveData<UIState<List<VehicleResponse>>> = _state
 
-    private suspend fun load(): NetworkResponse<List<VehicleResponse>, ErrorResponse> {
-        _vehicles.postValue(UIState.Loading)
+    suspend fun loadVehicles() {
+        _state.postValue(UIState.Loading)
 
-        return withContext(Dispatchers.IO) {
+        val response = withContext(Dispatchers.IO) {
             server.loadItems()
         }
+
+        Log.d(TAG, "response: $response")
+
+        _state.postValue(
+            when (response) {
+                is NetworkResponse.Success -> UIState.Success(response.body)
+                is NetworkResponse.ApiError -> UIState.Failure(IOException("message: ${response.body}, code: ${response.code}"))
+                is NetworkResponse.NetworkError -> UIState.Failure(response.error)
+                is NetworkResponse.UnknownError -> UIState.Failure(response.error ?: UnknownError())
+            }
+        )
     }
 
-    val vehicles: LiveData<UIState<List<VehicleResponse>>> = _vehicles
 }
