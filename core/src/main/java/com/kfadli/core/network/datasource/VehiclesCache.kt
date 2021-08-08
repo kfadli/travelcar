@@ -2,11 +2,10 @@ package com.kfadli.core.network.datasource
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.kfadli.core.network.responses.VehicleResponse
-import java.util.*
 import com.google.gson.reflect.TypeToken
-import com.kfadli.core.models.Vehicle
 import com.kfadli.core.models.RepositoryResponse
+import com.kfadli.core.models.Vehicle
+import java.util.*
 
 
 class VehiclesCache(private val preferences: SharedPreferences) {

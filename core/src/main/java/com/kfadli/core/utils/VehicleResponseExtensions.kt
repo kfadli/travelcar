@@ -1,6 +1,5 @@
 package com.kfadli.core.utils
 
-import com.kfadli.core.models.EquipmentsEnum
 import com.kfadli.core.models.Vehicle
 import com.kfadli.core.network.responses.VehicleResponse
 
@@ -13,5 +12,5 @@ fun VehicleResponse.toVehicle() = Vehicle(
     model = model,
     year = year,
     thumbnail = picture,
-    equipments = equipments.toEquipmentsEnum()
+    equipments = equipments?.toEquipmentsEnum() ?: emptyList()
 )

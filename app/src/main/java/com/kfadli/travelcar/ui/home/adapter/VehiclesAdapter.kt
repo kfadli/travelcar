@@ -3,11 +3,14 @@ package com.kfadli.travelcar.ui.home.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.kfadli.core.models.Vehicle
-import com.kfadli.core.network.responses.VehicleResponse
 import com.kfadli.travelcar.R
+import java.io.File
+
 
 class VehiclesAdapter : RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {
 
@@ -25,11 +28,15 @@ class VehiclesAdapter : RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView
+        val name: TextView
+        val year: TextView
+        val thumbnail: ImageView
 
         init {
             // Define click listener for the ViewHolder's View.
-            textView = view.findViewById(R.id.textView)
+            name = view.findViewById(R.id.name)
+            year = view.findViewById(R.id.year)
+            thumbnail = view.findViewById(R.id.thumbnail)
         }
     }
 
@@ -47,7 +54,13 @@ class VehiclesAdapter : RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.textView.text = dataSet[position].model
+        val item = dataSet[position]
+
+        viewHolder.name.text = "${item.brand} ${item.model}"
+        viewHolder.year.text = item.year.toString()
+        Glide.with(viewHolder.thumbnail.context)
+            .load(item.thumbnail)
+            .into(viewHolder.thumbnail)
     }
 
     // Return the size of your dataset (invoked by the layout manager)

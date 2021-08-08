@@ -5,5 +5,5 @@ data class VehicleResponse(
   val model: String,
   val year: Int,
   val picture: String,
-  val equipments: List<String>
+  val equipments: List<String>?
 )

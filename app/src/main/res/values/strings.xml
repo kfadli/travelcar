@@ -1,5 +1,5 @@
 <resources>
   <string name="app_name">TravelCar</string>
-  <string name="title_list">List</string>
+  <string name="title_vehicles">Vehicles</string>
   <string name="title_account">Account</string>
 </resources>
