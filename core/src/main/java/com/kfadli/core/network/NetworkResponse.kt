@@ -1,7 +1,6 @@
 package com.kfadli.core.network
 
 import java.io.IOException
-import java.util.*
 
 sealed class NetworkResponse<out T : Any, out U : Any> {
     /**

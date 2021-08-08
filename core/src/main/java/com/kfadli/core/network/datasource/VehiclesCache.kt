@@ -2,21 +2,21 @@ package com.kfadli.core.network.datasource
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.kfadli.core.network.NetworkResponse
-import com.kfadli.core.network.responses.ErrorResponse
 import com.kfadli.core.network.responses.VehicleResponse
 import java.util.*
 import com.google.gson.reflect.TypeToken
+import com.kfadli.core.models.Vehicle
+import com.kfadli.core.models.RepositoryResponse
 
 
-class HttpCache(val preferences: SharedPreferences) {
+class VehiclesCache(private val preferences: SharedPreferences) {
 
     private val VEHICLES_KEY = "vehicles_key"
     private val DATE_KEY = "date_key"
 
     private val gson = Gson()
 
-    fun save(body: List<VehicleResponse>) {
+    fun save(body: List<Vehicle>) {
         preferences.edit()
             .putString(VEHICLES_KEY, gson.toJson(body))
             .putLong(DATE_KEY, Date().time)
@@ -25,10 +25,10 @@ class HttpCache(val preferences: SharedPreferences) {
 
     fun isExist(): Boolean = preferences.contains(VEHICLES_KEY)
 
-    fun readCache(): NetworkResponse<List<VehicleResponse>, ErrorResponse> =
-        NetworkResponse.Success(
+    fun readCache(): RepositoryResponse<List<Vehicle>, Throwable> =
+        RepositoryResponse.Success(
             if (isExist()) {
-                val type = object : TypeToken<List<VehicleResponse?>?>() {}.type
+                val type = object : TypeToken<List<Vehicle?>?>() {}.type
                 val json = preferences.getString(VEHICLES_KEY, "{}")
                 gson.fromJson(json, type)
             } else {

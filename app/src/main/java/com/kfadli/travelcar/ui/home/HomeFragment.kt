@@ -5,27 +5,30 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.widget.SearchView.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kfadli.core.network.responses.VehicleResponse
-import com.kfadli.travelcar.MainActivity
-import com.kfadli.travelcar.databinding.FragmentListBinding
+import com.kfadli.core.models.Vehicle
+import com.kfadli.travelcar.databinding.FragmentVehiclesBinding
+import com.kfadli.travelcar.extensions.getQueryTextChangeStateFlow
 import com.kfadli.travelcar.models.UIState
 import com.kfadli.travelcar.ui.home.adapter.VehiclesAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class HomeFragment : Fragment() {
 
     companion object {
         private val TAG = HomeFragment::class.java.simpleName
     }
 
-    private lateinit var listViewModel: HomeViewModel
-    private var _binding: FragmentListBinding? = null
+    private lateinit var viewModel: HomeViewModel
+    private var _binding: FragmentVehiclesBinding? = null
 
     private val scope = CoroutineScope(Dispatchers.Main)
 
@@ -41,13 +44,30 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        listViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
-
-        _binding = FragmentListBinding.inflate(inflater, container, false)
+        _binding = FragmentVehiclesBinding.inflate(inflater, container, false)
 
         val root: View = binding.root
 
+        initUI()
+        initObserver()
+
+        scope.launch { initInstantSearch() }
+
+        return root
+    }
+
+    private suspend fun initInstantSearch() {
+        binding.search.searchView.getQueryTextChangeStateFlow()
+            .debounce(300)
+            .filter { query -> return@filter query.isNotEmpty() }
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.Default)
+            .collect { result -> viewModel.loadVehicles(result) }
+    }
+
+    private fun initUI() {
         binding.vehicleRecycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@HomeFragment.adapter
@@ -59,21 +79,24 @@ class HomeFragment : Fragment() {
         binding.loader.root.visibility = View.VISIBLE
 
         binding.error.retryButton.setOnClickListener {
-            scope.launch {
-                listViewModel.loadVehicles()
-            }
+            scope.launch { viewModel.loadVehicles() }
         }
+    }
 
-        listViewModel.state.observe(viewLifecycleOwner, { state ->
+    private fun initObserver() {
+        viewModel.state.observe(viewLifecycleOwner, { state ->
             when (state) {
                 is UIState.Failure -> {
-                    Log.e(TAG, "Failed to get vehicles from api", state.exception)
+                    Log.e(TAG, "Failed to get vehicles from repository", state.exception)
 
                     onFailure(state.exception)
                 }
 
                 is UIState.Success -> {
-                    Log.d(TAG, "get vehicles from api with success")
+                    Log.d(
+                        TAG, "get vehicles from repository" +
+                                " with success"
+                    )
 
                     onSuccess(state.data)
                 }
@@ -86,15 +109,13 @@ class HomeFragment : Fragment() {
 
             }
         })
-
-        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         scope.launch {
-            listViewModel.loadVehicles()
+            viewModel.loadVehicles()
         }
     }
 
@@ -107,7 +128,7 @@ class HomeFragment : Fragment() {
         binding.error.root.visibility = View.VISIBLE
     }
 
-    private fun onSuccess(data: List<VehicleResponse>) {
+    private fun onSuccess(data: List<Vehicle>) {
         binding.error.root.visibility = View.INVISIBLE
         binding.loader.root.visibility = View.INVISIBLE
 
