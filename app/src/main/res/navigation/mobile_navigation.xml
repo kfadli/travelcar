@@ -7,7 +7,7 @@
 
   <fragment
     android:id="@+id/navigation_home"
-    android:name="com.kfadli.travelcar.ui.home.HomeFragment"
+    android:name="com.kfadli.travelcar.ui.vehicles.VehiclesFragment"
     android:label="@string/title_vehicles"
     tools:layout="@layout/fragment_vehicles" />
 

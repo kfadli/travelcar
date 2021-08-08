@@ -1,4 +1,4 @@
-package com.kfadli.travelcar.ui.home.adapter
+package com.kfadli.travelcar.ui.vehicles.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kfadli.core.models.Vehicle
 import com.kfadli.travelcar.R
-import java.io.File
 
 
 class VehiclesAdapter : RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {

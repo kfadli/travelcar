@@ -1,4 +1,4 @@
-package com.kfadli.travelcar.ui.home
+package com.kfadli.travelcar.ui.vehicles
 
 import android.app.Application
 import android.util.Log
@@ -13,10 +13,10 @@ import com.kfadli.travelcar.models.UIState
 import kotlinx.coroutines.*
 
 @ExperimentalCoroutinesApi
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
+class VehiclesViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
-        private val TAG = HomeFragment::class.java.simpleName
+        private val TAG = VehiclesFragment::class.java.simpleName
     }
 
     private val vehiclesRepository: VehiclesRepository =

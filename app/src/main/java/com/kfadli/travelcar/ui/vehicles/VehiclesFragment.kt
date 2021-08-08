@@ -1,4 +1,4 @@
-package com.kfadli.travelcar.ui.home
+package com.kfadli.travelcar.ui.vehicles
 
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +13,7 @@ import com.kfadli.core.models.Vehicle
 import com.kfadli.travelcar.databinding.FragmentVehiclesBinding
 import com.kfadli.travelcar.extensions.getQueryTextChangeStateFlow
 import com.kfadli.travelcar.models.UIState
-import com.kfadli.travelcar.ui.home.adapter.VehiclesAdapter
+import com.kfadli.travelcar.ui.vehicles.adapter.VehiclesAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,13 +21,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
-class HomeFragment : Fragment() {
+class VehiclesFragment : Fragment() {
 
     companion object {
-        private val TAG = HomeFragment::class.java.simpleName
+        private val TAG = VehiclesFragment::class.java.simpleName
     }
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: VehiclesViewModel
     private var _binding: FragmentVehiclesBinding? = null
 
     private val scope = CoroutineScope(Dispatchers.Main)
@@ -44,7 +44,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(VehiclesViewModel::class.java)
 
         _binding = FragmentVehiclesBinding.inflate(inflater, container, false)
 
@@ -61,7 +61,6 @@ class HomeFragment : Fragment() {
     private suspend fun initInstantSearch() {
         binding.search.searchView.getQueryTextChangeStateFlow()
             .debounce(300)
-            .filter { query -> return@filter query.isNotEmpty() }
             .distinctUntilChanged()
             .flowOn(Dispatchers.Default)
             .collect { result -> viewModel.loadVehicles(result) }
@@ -70,7 +69,7 @@ class HomeFragment : Fragment() {
     private fun initUI() {
         binding.vehicleRecycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@HomeFragment.adapter
+            adapter = this@VehiclesFragment.adapter
         }
 
         binding.empty.root.visibility = View.INVISIBLE
