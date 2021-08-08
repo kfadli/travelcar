@@ -12,6 +12,7 @@ fun String.toEquipmentEnum(): EquipmentsEnum = when (this) {
     "Climatisation" -> EquipmentsEnum.CLIMATE
     "Siege enfant" -> EquipmentsEnum.SEAT_CHILD
     "Assistance 24h/24" -> EquipmentsEnum.ASSISTANCE_24_24
+    "ABS" -> EquipmentsEnum.ABS
     else -> EquipmentsEnum.UNKNOWN
 
 }

@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
     android:gravity="center_vertical">
 
   <androidx.cardview.widget.CardView
       app:cardCornerRadius="16dp"
       android:layout_width="match_parent"
-      android:layout_height="200dp">
+      android:layout_height="220dp"
+      app:cardUseCompatPadding="true"
+      app:cardMaxElevation="8dp"
+      >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -46,9 +48,10 @@
           android:id="@+id/thumbnail"
           android:layout_width="0dp"
           android:layout_height="0dp"
-          android:maxWidth="80dp"
-          android:maxHeight="140dp"
-          android:scaleType="centerInside"
+          android:layout_marginStart="16dp"
+          android:layout_marginTop="8dp"
+          android:layout_marginEnd="16dp"
+          android:scaleType="fitCenter"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"

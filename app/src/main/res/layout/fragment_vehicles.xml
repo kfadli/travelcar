@@ -7,15 +7,6 @@
     tools:context=".ui.vehicles.VehiclesFragment">
 
     <include
-        android:id="@+id/search"
-        layout="@layout/search_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <include
         android:id="@+id/loader"
         layout="@layout/loading_layout"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -45,7 +36,7 @@
         android:id="@+id/vehicleRecycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="#00B8D4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,5 +44,14 @@
         app:layout_constraintTop_toBottomOf="@+id/search">
 
     </androidx.recyclerview.widget.RecyclerView>
+
+    <include
+        android:id="@+id/search"
+        layout="@layout/search_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

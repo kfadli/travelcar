@@ -64,7 +64,7 @@ class VehiclesRepository(private val service: Api, private val cache: VehiclesCa
 
                 val yesterday = calendar.time
 
-                return cache.getDate().before(yesterday)
+                cache.getDate().before(yesterday)
             } else {
                 true
             }.also {

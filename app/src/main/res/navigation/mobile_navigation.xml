@@ -3,13 +3,27 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/mobile_navigation"
-  app:startDestination="@+id/navigation_home">
+  app:startDestination="@+id/navigation_vehicles">
 
   <fragment
-    android:id="@+id/navigation_home"
+    android:id="@+id/navigation_vehicles"
     android:name="com.kfadli.travelcar.ui.vehicles.VehiclesFragment"
     android:label="@string/title_vehicles"
-    tools:layout="@layout/fragment_vehicles" />
+    tools:layout="@layout/fragment_vehicles" >
+    <action
+        android:id="@+id/action_navigation_vehicles_to_navigation_detail"
+        app:destination="@id/navigation_detail" />
+  </fragment>
+
+  <fragment
+      android:id="@+id/navigation_detail"
+      android:name="com.kfadli.travelcar.ui.details.DetailsFragment"
+      android:label="@string/title_details"
+      tools:layout="@layout/fragment_details" >
+    <argument
+        android:name="vehicle"
+        app:argType="com.kfadli.core.models.Vehicle" />
+  </fragment>
 
   <fragment
     android:id="@+id/navigation_dashboard"

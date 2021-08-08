@@ -8,8 +8,12 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.transition.MaterialElevationScale
 import com.kfadli.core.models.Vehicle
+import com.kfadli.travelcar.R
 import com.kfadli.travelcar.databinding.FragmentVehiclesBinding
 import com.kfadli.travelcar.extensions.getQueryTextChangeStateFlow
 import com.kfadli.travelcar.models.UIState
@@ -36,7 +40,21 @@ class VehiclesFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val adapter = VehiclesAdapter()
+    private val adapter = VehiclesAdapter(object : VehiclesAdapter.SelectVehicleListener {
+        override fun onClick(vehicle: Vehicle) {
+
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = 200L
+            }
+            reenterTransition = MaterialElevationScale(true).apply {
+                duration = 200L
+            }
+
+            val action =
+                VehiclesFragmentDirections.actionNavigationVehiclesToNavigationDetail(vehicle)
+            findNavController().navigate(action)
+        }
+    })
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -119,6 +137,7 @@ class VehiclesFragment : Fragment() {
     }
 
     private fun onFailure(exception: Throwable) {
+        binding.search.searchView.visibility = View.INVISIBLE
         binding.empty.root.visibility = View.INVISIBLE
         binding.vehicleRecycler.visibility = View.INVISIBLE
         binding.loader.root.visibility = View.INVISIBLE
@@ -136,10 +155,12 @@ class VehiclesFragment : Fragment() {
         } else {
             adapter.updateVehicles(data)
             binding.vehicleRecycler.visibility = View.VISIBLE
+            binding.search.searchView.visibility = View.VISIBLE
         }
     }
 
     private fun onLoading() {
+        binding.search.searchView.visibility = View.INVISIBLE
         binding.empty.root.visibility = View.INVISIBLE
         binding.error.root.visibility = View.INVISIBLE
         binding.vehicleRecycler.visibility = View.INVISIBLE

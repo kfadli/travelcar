@@ -11,7 +11,8 @@ import com.kfadli.core.models.Vehicle
 import com.kfadli.travelcar.R
 
 
-class VehiclesAdapter : RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {
+class VehiclesAdapter(val listener: SelectVehicleListener) :
+    RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
@@ -60,9 +61,14 @@ class VehiclesAdapter : RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {
         Glide.with(viewHolder.thumbnail.context)
             .load(item.thumbnail)
             .into(viewHolder.thumbnail)
+
+        viewHolder.itemView.setOnClickListener { listener.onClick(vehicle = item) }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
 
+    interface SelectVehicleListener {
+        fun onClick(vehicle: Vehicle)
+    }
 }
