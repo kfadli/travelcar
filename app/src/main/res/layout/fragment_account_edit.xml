@@ -5,6 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="viewmodel"
+            type="com.kfadli.travelcar.ui.account.AccountViewModel" />
+
         <variable
             name="form"
             type="com.kfadli.travelcar.ui.account.form.FormModel" />
@@ -52,6 +57,7 @@
                     android:layout_marginTop="32dp"
                     android:layout_marginBottom="8dp"
                     android:enabled="@{form.valid}"
+                    android:onClick="@{() -> viewmodel.submit(form.createUser())}"
                     android:text="Submit"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -139,7 +145,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:hint="Date of Birth"
-                    app:dateFormatted="@={form.birthday}"
+                    app:dateFormatted="@{form.birthday}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/address_input" />

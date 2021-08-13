@@ -8,8 +8,13 @@ import com.kfadli.core.account.User
 import com.kfadli.core.repositories.UserRepository
 import com.kfadli.travelcar.TravelCarApplication
 import com.kfadli.travelcar.model.UIState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AccountViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val scope = CoroutineScope(Dispatchers.Main)
 
     companion object {
         private val TAG = AccountViewModel::class.java.simpleName
@@ -36,12 +41,13 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
     fun submit(newUser: User) {
         _state.postValue(UIState.Loading)
 
-        //repository.save(newUser)
+        scope.launch {
+            repository.save(newUser)
+            // reassign newUser to current User
+            this@AccountViewModel.user = newUser
 
-        // reassign newUser to current User
-        this.user = newUser
-
-        _state.postValue(UIState.Success(newUser))
-        _state.postValue(UIState.NavigationAction.ReadForm)
+            _state.postValue(UIState.Success(newUser))
+            _state.postValue(UIState.NavigationAction.ReadForm)
+        }
     }
 }

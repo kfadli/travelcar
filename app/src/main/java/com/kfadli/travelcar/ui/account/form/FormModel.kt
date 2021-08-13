@@ -16,6 +16,7 @@ class FormModel(
         set(value) {
             field = value
             notifyPropertyChanged(BR.firstName)
+            notifyPropertyChanged(BR.valid)
         }
 
     @get:Bindable
@@ -23,6 +24,7 @@ class FormModel(
         set(value) {
             field = value
             notifyPropertyChanged(BR.lastName)
+            notifyPropertyChanged(BR.valid)
         }
 
     @get:Bindable

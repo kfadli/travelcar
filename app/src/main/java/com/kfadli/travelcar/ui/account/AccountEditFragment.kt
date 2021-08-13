@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.kfadli.travelcar.databinding.FragmentAccountEditBinding
 import com.kfadli.travelcar.helper.ImageInputHelper
 import com.kfadli.travelcar.model.UIState
@@ -115,8 +116,13 @@ class AccountEditFragment : Fragment() {
                 UIState.Loading -> {
                 }
 
+                is UIState.NavigationAction.ReadForm -> {
+                    findNavController().popBackStack()
+                }
+
                 is UIState.Success -> {
                     binding.form = FormModel(state.data)
+                    binding.viewmodel = viewModel
                 }
                 else -> {
                     // Nothing to do
