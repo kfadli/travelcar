@@ -13,20 +13,21 @@ import com.kfadli.core.utils.toVehicles
 import java.io.IOException
 import java.util.*
 
-class VehiclesRepository(private val service: Api, private val cache: VehiclesCache) {
+class VehiclesRepository(private val service: Api, private val cache: VehiclesCache) :
+    IVehiclesRepository {
 
     companion object {
         private val TAG = VehiclesRepository::class.java.simpleName
     }
 
-    suspend fun search(query: String): RepositoryResponse<List<Vehicle>, Throwable> {
+    override suspend fun search(query: String): RepositoryResponse<List<Vehicle>, Throwable> {
         Log.v(TAG, "searchItems | query: $query")
 
         return when (val vehicles = load()) {
             is RepositoryResponse.Failure -> vehicles
             is RepositoryResponse.Success -> {
 
-                val filtered = vehicles.body.filter { vehicle ->
+                val filtered = vehicles.response?.filter { vehicle ->
                     vehicle.model.contains(query, true) || vehicle.brand.contains(query, true)
                 }
 
@@ -37,7 +38,7 @@ class VehiclesRepository(private val service: Api, private val cache: VehiclesCa
         }
     }
 
-    suspend fun load(): RepositoryResponse<List<Vehicle>, Throwable> = object :
+    override suspend fun load(): RepositoryResponse<List<Vehicle>, Throwable> = object :
         NetworkBoundResource<RepositoryResponse<List<Vehicle>, Throwable>,
                 NetworkResponse<List<VehicleResponse>, ErrorResponse>>() {
 
@@ -95,7 +96,7 @@ class VehiclesRepository(private val service: Api, private val cache: VehiclesCa
 
     }.execute().also { response ->
         when (response) {
-            is RepositoryResponse.Success -> cache.save(response.body)
+            is RepositoryResponse.Success -> cache.save(response.response ?: emptyList())
             else -> {
                 // ignore we have nothing to save here
             }

@@ -1,4 +1,4 @@
-package com.kfadli.travelcar.ui.vehicles.adapter
+package com.kfadli.travelcar.ui.vehicles.list.adapter
 
 import android.view.LayoutInflater
 import android.view.View

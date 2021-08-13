@@ -1,4 +1,4 @@
-package com.kfadli.travelcar.ui.vehicles
+package com.kfadli.travelcar.ui.vehicles.list
 
 import android.os.Bundle
 import android.util.Log
@@ -8,16 +8,14 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.transition.MaterialElevationScale
 import com.kfadli.core.models.Vehicle
-import com.kfadli.travelcar.R
 import com.kfadli.travelcar.databinding.FragmentVehiclesBinding
 import com.kfadli.travelcar.extensions.getQueryTextChangeStateFlow
-import com.kfadli.travelcar.models.UIState
-import com.kfadli.travelcar.ui.vehicles.adapter.VehiclesAdapter
+import com.kfadli.travelcar.model.UIState
+import com.kfadli.travelcar.ui.vehicles.list.adapter.VehiclesAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,6 +50,7 @@ class VehiclesFragment : Fragment() {
 
             val action =
                 VehiclesFragmentDirections.actionNavigationVehiclesToNavigationDetail(vehicle)
+
             findNavController().navigate(action)
         }
     })
@@ -66,14 +65,18 @@ class VehiclesFragment : Fragment() {
 
         _binding = FragmentVehiclesBinding.inflate(inflater, container, false)
 
-        val root: View = binding.root
-
         initUI()
         initObserver()
 
         scope.launch { initInstantSearch() }
 
-        return root
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.state.removeObservers(viewLifecycleOwner)
+        _binding = null
     }
 
     private suspend fun initInstantSearch() {
@@ -124,6 +127,9 @@ class VehiclesFragment : Fragment() {
                     onLoading()
                 }
 
+                else -> {
+                    // Ignore other states
+                }
             }
         })
     }
@@ -167,8 +173,4 @@ class VehiclesFragment : Fragment() {
         binding.loader.root.visibility = View.VISIBLE
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

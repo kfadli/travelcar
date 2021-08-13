@@ -2,7 +2,9 @@ package com.kfadli.core
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.kfadli.core.network.datasource.UserCache
 import com.kfadli.core.network.datasource.VehiclesCache
+import com.kfadli.core.repositories.UserRepository
 import com.kfadli.core.repositories.VehiclesRepository
 
 private const val URL =
@@ -15,8 +17,15 @@ class CoreManager(context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-    val httpRepository: VehiclesRepository by lazy {
-        VehiclesRepository(CoreFactory.createService(URL), VehiclesCache(sharedPreferences))
+    val vehiclesRepository: VehiclesRepository by lazy {
+        VehiclesRepository(
+            service = CoreFactory.createService(URL),
+            cache = VehiclesCache(sharedPreferences)
+        )
+    }
+
+    val userRepository: UserRepository by lazy {
+        UserRepository(userCache = UserCache(sharedPreferences))
     }
 
 }

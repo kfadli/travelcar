@@ -1,4 +1,4 @@
-package com.kfadli.travelcar.ui.details
+package com.kfadli.travelcar.ui.vehicles.details
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,11 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
-import com.kfadli.travelcar.R
 import com.kfadli.travelcar.databinding.FragmentDetailsBinding
-import com.kfadli.travelcar.databinding.FragmentVehiclesBinding
-import com.kfadli.travelcar.ui.vehicles.VehiclesViewModel
-import kotlinx.coroutines.launch
 
 class DetailsFragment : Fragment() {
 

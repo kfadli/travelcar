@@ -1,16 +1,18 @@
-package com.kfadli.travelcar.ui.vehicles
+package com.kfadli.travelcar.ui.vehicles.list
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.kfadli.core.models.Vehicle
 import com.kfadli.core.models.RepositoryResponse
+import com.kfadli.core.models.Vehicle
 import com.kfadli.core.repositories.VehiclesRepository
 import com.kfadli.travelcar.TravelCarApplication
-import com.kfadli.travelcar.models.UIState
-import kotlinx.coroutines.*
+import com.kfadli.travelcar.model.UIState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.withContext
 
 @ExperimentalCoroutinesApi
 class VehiclesViewModel(application: Application) : AndroidViewModel(application) {
@@ -19,8 +21,8 @@ class VehiclesViewModel(application: Application) : AndroidViewModel(application
         private val TAG = VehiclesFragment::class.java.simpleName
     }
 
-    private val vehiclesRepository: VehiclesRepository =
-        (application as TravelCarApplication).coreManager.httpRepository
+    private val repository: VehiclesRepository =
+        (application as TravelCarApplication).coreManager.vehiclesRepository
 
 
     private val _state = MutableLiveData<UIState<List<Vehicle>>>()
@@ -34,8 +36,8 @@ class VehiclesViewModel(application: Application) : AndroidViewModel(application
 
         val response = withContext(Dispatchers.IO) {
             when (query) {
-                "" -> vehiclesRepository.load()
-                else -> vehiclesRepository.search(query = query)
+                "" -> repository.load()
+                else -> repository.search(query = query)
             }
         }
 
@@ -44,7 +46,9 @@ class VehiclesViewModel(application: Application) : AndroidViewModel(application
         _state.postValue(
             when (response) {
                 is RepositoryResponse.Failure -> UIState.Failure(response.throwable)
-                is RepositoryResponse.Success -> UIState.Success(data = response.body)
+                is RepositoryResponse.Success -> UIState.Success(
+                    data = response.response ?: emptyList()
+                )
             }
         )
     }
